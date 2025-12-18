@@ -31,6 +31,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "commitizen",
     "ruff",
     "pytest",
     "pytest-cov",
@@ -148,3 +149,11 @@ docstring-code-line-length = "dynamic"
 [tool.ruff.lint.isort]
 known-first-party = ["pyekw"]
 force-single-line = true
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "pep440"
+version_provider = "uv"
+update_changelog_on_bump = true
+major_version_zero = true
