@@ -165,7 +165,7 @@ class TestCourtRegistry:
         """Test that court data is not empty and has expected structure."""
         all_courts = registry.get_all_courts()
         assert len(all_courts) > 100, "Should have more than 100 courts"
-        for code in all_courts.keys():
+        for code in all_courts:
             assert len(code) >= 3, f"Court code {code} too short"
             assert len(code) <= 6, f"Court code {code} too long"
             assert code.isupper(), f"Court code {code} should be uppercase"

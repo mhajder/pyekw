@@ -143,7 +143,7 @@ class KWUtils:
             Dictionary with KW number information or None if invalid
         """
         normalized = self.normalize_kw_number(kw_number)
-        is_valid, error = self.validator.validate_kw_number(normalized)
+        is_valid, _error = self.validator.validate_kw_number(normalized)
 
         if not is_valid:
             return None
