@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pyekw"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python library for Polish eKW (Land Registry)"
 readme = "README.md"
 requires-python = ">=3.8"
