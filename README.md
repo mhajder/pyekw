@@ -11,6 +11,14 @@ A Python library for working with Polish eKW (Elektroniczne Księgi Wieczyste) l
 
 ## Installation
 
+### From PyPI
+
+```sh
+uv add pyekw
+```
+
+### From source
+
 ```sh
 uv add "git+https://github.com/mhajder/pyekw.git"
 ```
