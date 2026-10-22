@@ -5,9 +5,23 @@ This library provides utilities for working with Polish Land Registry (eKW) numb
 including validation, check digit generation, and court code verification.
 """
 
+from importlib.metadata import PackageNotFoundError as _PackageNotFoundError
+from importlib.metadata import version as _version
+
 from .courts import CourtRegistry
 from .generator import CheckDigitGenerator
 from .utils import KWUtils
 from .validator import KWValidator
 
-__all__ = ["CheckDigitGenerator", "CourtRegistry", "KWUtils", "KWValidator"]
+try:
+    __version__ = _version("pyekw")
+except _PackageNotFoundError:  # running from a source tree without installing
+    __version__ = "0.0.0"
+
+__all__ = [
+    "CheckDigitGenerator",
+    "CourtRegistry",
+    "KWUtils",
+    "KWValidator",
+    "__version__",
+]

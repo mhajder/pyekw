@@ -149,6 +149,8 @@ Helpers for working with KW numbers in real-world data.
 | `generate_kw_number_variants(court_code, base_number, count=10)` | `list[str]` | Generate a series of consecutive valid KW numbers |
 | `suggest_corrections(kw_number)` | `list[str]` | Suggest valid KW numbers for an invalid input |
 
+The installed version is available as `pyekw.__version__`.
+
 ## 🔨 Development
 
 ```sh
