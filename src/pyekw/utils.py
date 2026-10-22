@@ -46,10 +46,12 @@ class KWUtils:
         Returns:
             List of potential KW numbers found in the text
         """
-        # Pattern for KW numbers: 4 letters/digits + / + 8 digits + / + 1 digit
-        pattern = r"\b[A-Z0-9]{4}/\d{8}/\d\b"
+        # Pattern for KW numbers: 4 letters/digits + / + 8 digits + / + 1 digit,
+        # allowing horizontal whitespace (e.g. spaces, tabs, non-breaking spaces)
+        # around the separators
+        pattern = r"\b([A-Z0-9]{4})[^\S\r\n]*/[^\S\r\n]*([0-9]{8})[^\S\r\n]*/[^\S\r\n]*([0-9])\b"
         matches = re.findall(pattern, text.upper())
-        return matches
+        return ["/".join(parts) for parts in matches]
 
     def validate_multiple_kw_numbers(
         self, kw_numbers: list[str], check_court: bool = True

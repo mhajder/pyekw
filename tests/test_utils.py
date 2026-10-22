@@ -400,3 +400,20 @@ class TestKWUtils:
 
         # Should return None due to parse error
         assert info is None
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "KW nr WA4M / 00123456 / 4.",
+            "KW nr WA4M/ 00123456 /4.",
+            "KW nr WA4M\t/\t00123456\t/\t4.",
+            "KW nr WA4M\u00a0/\u00a000123456\u00a0/\u00a04.",
+        ],
+    )
+    def test_extract_kw_numbers_with_spaces(self, utils, text):
+        """Test that KW numbers with spaces around separators are extracted and normalized."""
+        assert utils.extract_kw_numbers(text) == ["WA4M/00123456/4"]
+
+    def test_extract_kw_numbers_ignores_non_ascii_digits(self, utils):
+        """Test that Unicode digits are not treated as KW number digits."""
+        assert utils.extract_kw_numbers("WA4M/0012345٦/4") == []
