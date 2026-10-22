@@ -34,7 +34,7 @@ WA4M / 00123456 / 4
 - **Court registry**: built-in database of 350+ Polish courts handling land registry matters
 - **Text utilities**: normalize, extract, batch-validate and get detailed info about KW numbers
 - **Error correction**: suggest valid KW numbers for an invalid input
-- **Zero dependencies**: pure Python, nothing else to install
+- **Zero dependencies**: pure Python, fully typed, nothing else to install
 
 ## 🚀 Installation
 
@@ -144,10 +144,14 @@ Helpers for working with KW numbers in real-world data.
 |--------|---------|-------------|
 | `normalize_kw_number(kw_number)` | `str` | Normalize spacing and letter case |
 | `extract_kw_numbers(text)` | `list[str]` | Find all KW numbers in a text |
-| `get_kw_info(kw_number)` | `dict[str, Any] \| None` | Court, register number, check digit and validity in one dict |
-| `validate_multiple_kw_numbers(kw_numbers, check_court=True)` | `dict[str, dict[str, Any]]` | Validate many KW numbers at once |
+| `get_kw_info(kw_number)` | `KWInfo \| None` | Court, register number, check digit and validity in one dict |
+| `validate_multiple_kw_numbers(kw_numbers, check_court=True)` | `dict[str, KWValidationResult]` | Validate many KW numbers at once |
 | `generate_kw_number_variants(court_code, base_number, count=10)` | `list[str]` | Generate a series of consecutive valid KW numbers |
 | `suggest_corrections(kw_number)` | `list[str]` | Suggest valid KW numbers for an invalid input |
+
+### Result types
+
+`KWInfo` and `KWValidationResult` are `TypedDict`s exported from `pyekw`, so type checkers and editors know every key of the returned dicts. In `KWValidationResult`, the court and register keys are only present when the KW number is valid.
 
 The installed version is available as `pyekw.__version__`.
 

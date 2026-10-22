@@ -10,6 +10,8 @@ from importlib.metadata import version as _version
 
 from .courts import CourtRegistry
 from .generator import CheckDigitGenerator
+from .models import KWInfo
+from .models import KWValidationResult
 from .utils import KWUtils
 from .validator import KWValidator
 
@@ -21,7 +23,9 @@ except _PackageNotFoundError:  # running from a source tree without installing
 __all__ = [
     "CheckDigitGenerator",
     "CourtRegistry",
+    "KWInfo",
     "KWUtils",
+    "KWValidationResult",
     "KWValidator",
     "__version__",
 ]

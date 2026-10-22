@@ -3,10 +3,11 @@ Utility functions for working with eKW numbers.
 """
 
 import re
-from typing import Any
 
 from .courts import CourtRegistry
 from .generator import CheckDigitGenerator
+from .models import KWInfo
+from .models import KWValidationResult
 from .validator import KWValidator
 
 
@@ -55,7 +56,7 @@ class KWUtils:
 
     def validate_multiple_kw_numbers(
         self, kw_numbers: list[str], check_court: bool = True
-    ) -> dict[str, dict[str, Any]]:
+    ) -> dict[str, KWValidationResult]:
         """
         Validate multiple KW numbers at once.
 
@@ -66,13 +67,13 @@ class KWUtils:
         Returns:
             Dictionary with validation results for each KW number
         """
-        results = {}
+        results: dict[str, KWValidationResult] = {}
 
         for kw_number in kw_numbers:
             normalized = self.normalize_kw_number(kw_number)
             is_valid, error = self.validator.validate_kw_number(normalized, check_court)
 
-            result = {
+            result: KWValidationResult = {
                 "original": kw_number,
                 "normalized": normalized,
                 "is_valid": is_valid,
@@ -131,7 +132,7 @@ class KWUtils:
 
         return variants
 
-    def get_kw_info(self, kw_number: str) -> dict[str, Any] | None:
+    def get_kw_info(self, kw_number: str) -> KWInfo | None:
         """
         Get detailed information about a KW number.
 
