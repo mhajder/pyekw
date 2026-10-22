@@ -417,3 +417,20 @@ class TestKWUtils:
     def test_extract_kw_numbers_ignores_non_ascii_digits(self, utils):
         """Test that Unicode digits are not treated as KW number digits."""
         assert utils.extract_kw_numbers("WA4M/0012345٦/4") == []
+
+    def test_suggest_corrections_for_court_code_with_invalid_character(self, utils):
+        """Test suggestions for a court code with a character not used in KW numbers."""
+        suggestions = utils.suggest_corrections("WA4Q/00123456/4")
+
+        assert suggestions[0] == "WA4M/00123456/4"
+        assert len(suggestions) <= 3
+
+    def test_suggest_corrections_for_unknown_court_only_suggests_known_courts(
+        self, utils
+    ):
+        """Test that suggestions for an unknown court code only use known court codes."""
+        suggestions = utils.suggest_corrections("WA9M/00123456/4")
+
+        assert suggestions
+        for suggestion in suggestions:
+            assert utils.validator.is_valid_kw_number(suggestion)

@@ -181,29 +181,40 @@ class KWUtils:
             court_code, register_number, provided_check_digit = (
                 self.validator.parse_kw_number(normalized)
             )
+        except ValueError:
+            # If parsing fails completely, can't suggest much
+            return suggestions
 
-            # Suggest correct check digit
+        if self.court_registry.is_valid_court(court_code):
+            # Known court: only the check digit can be wrong
             correct_check_digit = CheckDigitGenerator.calculate_check_digit(
                 court_code, register_number
             )
             if str(correct_check_digit) != provided_check_digit:
-                corrected = f"{court_code}/{register_number}/{correct_check_digit}"
-                suggestions.append(corrected)
-
-            # If court code is invalid, suggest similar ones
-            if not self.court_registry.is_valid_court(court_code):
-                similar_courts = self.court_registry.search_courts(court_code[:2])
-                for similar_code, _ in similar_courts[:3]:  # Top 3 suggestions
-                    corrected_check_digit = CheckDigitGenerator.calculate_check_digit(
-                        similar_code, register_number
-                    )
-                    corrected = (
-                        f"{similar_code}/{register_number}/{corrected_check_digit}"
-                    )
-                    suggestions.append(corrected)
-
-        except ValueError:
-            # If parsing fails completely, can't suggest much
-            pass
+                suggestions.append(
+                    f"{court_code}/{register_number}/{correct_check_digit}"
+                )
+        else:
+            # Unknown court code: suggest similar known ones
+            for similar_code in self._similar_court_codes(court_code):
+                corrected_check_digit = CheckDigitGenerator.calculate_check_digit(
+                    similar_code, register_number
+                )
+                suggestions.append(
+                    f"{similar_code}/{register_number}/{corrected_check_digit}"
+                )
 
         return suggestions
+
+    def _similar_court_codes(
+        self, court_code: str, max_distance: int = 2, limit: int = 3
+    ) -> list[str]:
+        """Find known court codes that differ from court_code in at most max_distance positions."""
+        distances = [
+            (sum(a != b for a, b in zip(code, court_code, strict=True)), code)
+            for code in self.court_registry.get_all_courts()
+            if len(code) == len(court_code)
+        ]
+        return [
+            code for distance, code in sorted(distances) if distance <= max_distance
+        ][:limit]
