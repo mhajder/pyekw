@@ -2,11 +2,6 @@
 Court registry for Polish eKW system.
 """
 
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Tuple
-
 from .courts_data import COURTS
 
 
@@ -17,7 +12,7 @@ class CourtRegistry:
         """Initialize the court registry with complete court data."""
         self._courts_data = self._load_courts()
 
-    def _load_courts(self) -> Dict[str, Dict[str, str]]:
+    def _load_courts(self) -> dict[str, dict[str, str]]:
         """Load complete court data from the COURTS constant."""
         return COURTS.copy()
 
@@ -33,7 +28,7 @@ class CourtRegistry:
         """
         return court_code.upper() in self._courts_data
 
-    def get_court_name(self, court_code: str) -> Optional[str]:
+    def get_court_name(self, court_code: str) -> str | None:
         """
         Get the short name of a court by its code.
 
@@ -46,7 +41,7 @@ class CourtRegistry:
         court_data = self._courts_data.get(court_code.upper())
         return court_data["name"] if court_data else None
 
-    def get_court_full_name(self, court_code: str) -> Optional[str]:
+    def get_court_full_name(self, court_code: str) -> str | None:
         """
         Get the full descriptive name of a court by its code.
 
@@ -59,7 +54,7 @@ class CourtRegistry:
         court_data = self._courts_data.get(court_code.upper())
         return court_data["full_name"] if court_data else None
 
-    def get_all_courts(self) -> Dict[str, str]:
+    def get_all_courts(self) -> dict[str, str]:
         """
         Get all courts as a dictionary.
 
@@ -68,7 +63,7 @@ class CourtRegistry:
         """
         return {code: data["name"] for code, data in self._courts_data.items()}
 
-    def get_all_courts_detailed(self) -> Dict[str, Dict[str, str]]:
+    def get_all_courts_detailed(self) -> dict[str, dict[str, str]]:
         """
         Get all courts with detailed information.
 
@@ -77,7 +72,7 @@ class CourtRegistry:
         """
         return self._courts_data.copy()
 
-    def search_courts(self, query: str) -> List[Tuple[str, str]]:
+    def search_courts(self, query: str) -> list[tuple[str, str]]:
         """
         Search for courts by name or code.
 

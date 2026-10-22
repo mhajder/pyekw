@@ -49,7 +49,7 @@ class CheckDigitGenerator:
                     f"Input too long: {len(full_number)} characters, max {len(WEIGHTS)}"
                 )
 
-            char_value = CHARACTER_VALUES.get(char)
+            char_value = CHARACTER_VALUES[char]
 
             weight = WEIGHTS[i]
             total += char_value * weight

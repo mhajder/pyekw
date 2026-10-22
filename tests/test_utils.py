@@ -272,13 +272,13 @@ class TestKWUtils:
             else:
                 assert expected_correction in suggestions
 
-    def test_suggest_corrections_for_unparseable_input(self, utils):
+    def test_suggest_corrections_for_unparsable_input(self, utils):
         """Test correction suggestions for completely invalid input."""
         invalid_input = "INVALID"
         suggestions = utils.suggest_corrections(invalid_input)
 
         assert isinstance(suggestions, list)
-        # Should return empty list for unparseable input
+        # Should return empty list for unparsable input
 
     def test_suggest_corrections_multiple_suggestions(self, utils):
         """Test that correction suggestions can provide multiple options."""

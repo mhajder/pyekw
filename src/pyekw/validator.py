@@ -3,8 +3,6 @@ Validator for Polish eKW numbers.
 """
 
 import re
-from typing import Optional
-from typing import Tuple
 
 from .constants import CHECK_DIGIT_LENGTH
 from .constants import KW_PARTS_COUNT
@@ -20,7 +18,7 @@ class KWValidator:
         """Initialize the validator with court registry."""
         self.court_registry = CourtRegistry()
 
-    def parse_kw_number(self, kw_number: str) -> Tuple[str, str, str]:
+    def parse_kw_number(self, kw_number: str) -> tuple[str, str, str]:
         """
         Parse a KW number into its components.
 
@@ -106,7 +104,7 @@ class KWValidator:
 
     def validate_kw_number(
         self, kw_number: str, check_court: bool = True
-    ) -> Tuple[bool, Optional[str]]:
+    ) -> tuple[bool, str | None]:
         """
         Validate a complete KW number.
 

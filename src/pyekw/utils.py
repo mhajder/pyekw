@@ -4,9 +4,6 @@ Utility functions for working with eKW numbers.
 
 import re
 from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
 
 from .courts import CourtRegistry
 from .generator import CheckDigitGenerator
@@ -39,7 +36,7 @@ class KWUtils:
 
         return normalized
 
-    def extract_kw_numbers(self, text: str) -> List[str]:
+    def extract_kw_numbers(self, text: str) -> list[str]:
         """
         Extract potential KW numbers from text.
 
@@ -55,8 +52,8 @@ class KWUtils:
         return matches
 
     def validate_multiple_kw_numbers(
-        self, kw_numbers: List[str], check_court: bool = True
-    ) -> Dict[str, Dict[str, Any]]:
+        self, kw_numbers: list[str], check_court: bool = True
+    ) -> dict[str, dict[str, Any]]:
         """
         Validate multiple KW numbers at once.
 
@@ -107,7 +104,7 @@ class KWUtils:
 
     def generate_kw_number_variants(
         self, court_code: str, base_number: int, count: int = 10
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Generate a series of KW numbers starting from a base number.
 
@@ -132,7 +129,7 @@ class KWUtils:
 
         return variants
 
-    def get_kw_info(self, kw_number: str) -> Optional[Dict[str, Any]]:
+    def get_kw_info(self, kw_number: str) -> dict[str, Any] | None:
         """
         Get detailed information about a KW number.
 
@@ -165,7 +162,7 @@ class KWUtils:
         except ValueError:
             return None
 
-    def suggest_corrections(self, kw_number: str) -> List[str]:
+    def suggest_corrections(self, kw_number: str) -> list[str]:
         """
         Suggest possible corrections for an invalid KW number.
 
