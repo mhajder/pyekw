@@ -247,7 +247,7 @@ COURTS = {
     "OL1E": {"name": "EŁK", "full_name": "w Ełku"},
     "OL1G": {"name": "GIŻYCKO", "full_name": "w Giżycku"},
     "OL1K": {"name": "KĘTRZYN", "full_name": "w Kętrzynie"},
-    "OL1L": {"name": "LIDZBARK WARMIŃSKI", "full_name": "w Lidzbarku Wamińskim "},
+    "OL1L": {"name": "LIDZBARK WARMIŃSKI", "full_name": "w Lidzbarku Warmińskim"},
     "OL1M": {"name": "MRĄGOWO", "full_name": "w Mrągowie"},
     "OL1N": {"name": "NIDZICA", "full_name": "w Nidzicy"},
     "OL1O": {"name": "OLSZTYN", "full_name": "w Olsztynie"},
