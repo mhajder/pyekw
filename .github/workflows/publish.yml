@@ -6,7 +6,13 @@ on:
       - "v*.*.*"
 
 jobs:
+  checks:
+    uses: ./.github/workflows/pre-commit.yml
+    permissions:
+      contents: read
+
   publish-pypi:
+    needs: checks
     runs-on: ubuntu-latest
     environment:
       name: pypi
