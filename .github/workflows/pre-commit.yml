@@ -1,0 +1,49 @@
+name: Pre-commit Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prek:
+    name: Run prek
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the latest version of uv and set the python version
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.15"
+
+      - name: Run prek
+        uses: j178/prek-action@v2
+
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the latest version of uv and set the python version
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --locked --all-groups
+
+      - name: Run pytest
+        run: uv run pytest -v --cov=src/

@@ -16,17 +16,44 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Get version from tag
         id: get_version
-        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        run: |
+          echo "tag_name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          echo "version=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release notes
+        env:
+          TAG: ${{ steps.get_version.outputs.tag_name }}
+          VERSION: ${{ steps.get_version.outputs.version }}
+        run: |
+          PKG_NAME=$(grep -m1 '^name' pyproject.toml | sed 's/.*= *"\(.*\)"/\1/')
+          CHANGELOG=$(awk -v heading="## $TAG " '
+            index($0, heading) == 1 { flag = 1; next }
+            /^## / { if (flag) exit }
+            flag && (started || NF) { started = 1; print }
+          ' CHANGELOG.md)
+          {
+            echo "## Release $TAG"
+            echo ""
+            echo "### 🐍 Python Package"
+            echo ""
+            echo "- **Package:** \`$PKG_NAME==$VERSION\`"
+            echo "- **Registry:** [PyPI](https://pypi.org/project/$PKG_NAME/$VERSION/)"
+            echo ""
+            echo "### 📋 Changelog"
+            echo ""
+            echo "${CHANGELOG:-No changelog entry found for this release.}"
+          } > release_notes.md
+          cat release_notes.md
 
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.get_version.outputs.tag_name }}
           name: ${{ steps.get_version.outputs.tag_name }}
-          generate_release_notes: true
+          body_path: release_notes.md
           prerelease: ${{ contains(steps.get_version.outputs.tag_name, '-') }}
