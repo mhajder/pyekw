@@ -102,16 +102,13 @@ class TestKWUtils:
         assert utils.extract_kw_numbers("Invalid format: WA4M-123456-2") == []
 
     def test_extract_kw_numbers_boundary_cases(self, utils):
-        """Test extraction with boundary cases."""
-        # Test with minimal valid format
-        text_minimal = "A1/12345678/9"
-        extracted = utils.extract_kw_numbers(text_minimal)
-        assert "A1/12345678/9" in extracted
+        """Test that only 4-character court codes are extracted, like in the validator."""
+        assert utils.extract_kw_numbers("CIKW/00000001/5") == ["CIKW/00000001/5"]
 
-        # Test with maximum court code length
-        text_max = "ABCD12/12345678/9"
-        extracted = utils.extract_kw_numbers(text_max)
-        assert "ABCD12/12345678/9" in extracted
+        # Shorter or longer court codes are never valid KW numbers
+        assert utils.extract_kw_numbers("A1/12345678/9") == []
+        assert utils.extract_kw_numbers("WA4/12345678/9") == []
+        assert utils.extract_kw_numbers("ABCD12/12345678/9") == []
 
     def test_validate_multiple_kw_numbers(self, utils, kw_numbers_for_batch_validation):
         """Test batch validation of multiple KW numbers."""

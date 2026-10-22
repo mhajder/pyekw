@@ -46,8 +46,8 @@ class KWUtils:
         Returns:
             List of potential KW numbers found in the text
         """
-        # Pattern for KW numbers: letters/digits + / + 8 digits + / + 1 digit
-        pattern = r"\b[A-Z0-9]{2,6}/\d{8}/\d\b"
+        # Pattern for KW numbers: 4 letters/digits + / + 8 digits + / + 1 digit
+        pattern = r"\b[A-Z0-9]{4}/\d{8}/\d\b"
         matches = re.findall(pattern, text.upper())
         return matches
 

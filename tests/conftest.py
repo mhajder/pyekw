@@ -54,12 +54,13 @@ def valid_test_cases():
 
 @pytest.fixture
 def invalid_court_codes():
-    """Invalid court codes for testing error handling."""
+    """Invalid court codes with the expected error message."""
     return [
-        "INVALID",  # Contains invalid character 'V'
-        "WA4Q",  # Contains invalid character 'Q'
-        "WA4V",  # Contains invalid character 'V'
-        "",  # Empty string
+        ("INVALID", "Court code must be exactly 4 characters"),  # Too long
+        ("WA", "Court code must be exactly 4 characters"),  # Too short
+        ("", "Court code must be exactly 4 characters"),  # Empty string
+        ("WA4Q", "Invalid character 'Q'"),  # Contains invalid character 'Q'
+        ("WA4V", "Invalid character 'V'"),  # Contains invalid character 'V'
     ]
 
 
@@ -81,8 +82,8 @@ def invalid_register_numbers():
 def edge_case_inputs():
     """Edge case inputs for comprehensive testing."""
     return [
-        ("A", "00000000"),  # Single character court code
-        ("ABCD", "00000000"),  # Maximum length court code
+        ("AAAA", "00000000"),  # Letters-only court code
+        ("ABCD", "00000000"),  # Mixed letters court code
         ("WA4M", "00000000"),  # All zeros register number
         ("WA4M", "99999999"),  # All nines register number
     ]

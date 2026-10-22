@@ -391,3 +391,21 @@ class TestKWValidator:
     ):
         """Test that Unicode digits are rejected instead of raising an exception."""
         assert validator.validate_kw_number(kw_number) == (False, error)
+
+    @pytest.mark.parametrize("kw_number", ["A/00000000/0", "WA4MX/00000000/0"])
+    def test_parse_kw_number_rejects_wrong_court_code_length(
+        self, validator, kw_number
+    ):
+        """Test that court codes must be exactly 4 characters."""
+        with pytest.raises(ValueError, match="Court code must be exactly 4 characters"):
+            validator.parse_kw_number(kw_number)
+
+    @pytest.mark.parametrize("kw_number", ["WA-M/00123456/4", "WĄ4M/00123456/4"])
+    def test_parse_kw_number_rejects_invalid_court_code_characters(
+        self, validator, kw_number
+    ):
+        """Test that 4-character court codes with non-ASCII-alphanumeric characters are rejected."""
+        with pytest.raises(
+            ValueError, match="Court code must contain only letters and digits"
+        ):
+            validator.parse_kw_number(kw_number)

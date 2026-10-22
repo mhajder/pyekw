@@ -3,6 +3,8 @@ Check digit generator for Polish eKW numbers.
 """
 
 from .constants import CHARACTER_VALUES
+from .constants import COURT_CODE_LENGTH
+from .constants import REGISTER_NUMBER_LENGTH
 from .constants import WEIGHTS
 
 
@@ -33,9 +35,14 @@ class CheckDigitGenerator:
         full_number = court_code.upper() + register_number
 
         # Validate input
-        if len(register_number) != 8:
+        if len(court_code) != COURT_CODE_LENGTH:
             raise ValueError(
-                f"Register number must be exactly 8 digits, got {len(register_number)}"
+                f"Court code must be exactly {COURT_CODE_LENGTH} characters, got {len(court_code)}"
+            )
+
+        if len(register_number) != REGISTER_NUMBER_LENGTH:
+            raise ValueError(
+                f"Register number must be exactly {REGISTER_NUMBER_LENGTH} digits, got {len(register_number)}"
             )
 
         if not is_ascii_digits(register_number):
@@ -48,16 +55,8 @@ class CheckDigitGenerator:
 
         # Calculate weighted sum
         total = 0
-        for i, char in enumerate(full_number):
-            if i >= len(WEIGHTS):
-                raise ValueError(
-                    f"Input too long: {len(full_number)} characters, max {len(WEIGHTS)}"
-                )
-
-            char_value = CHARACTER_VALUES[char]
-
-            weight = WEIGHTS[i]
-            total += char_value * weight
+        for char, weight in zip(full_number, WEIGHTS, strict=True):
+            total += CHARACTER_VALUES[char] * weight
 
         return total % 10
 

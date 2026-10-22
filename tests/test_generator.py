@@ -44,22 +44,9 @@ class TestCheckDigitGenerator:
     ):
         """Test calculate_check_digit with invalid court codes."""
         register_number = "12345678"
-        for invalid_court_code in invalid_court_codes:
-            if invalid_court_code == "":
-                # Empty string doesn't raise "Invalid character" but may work or cause other issues
-                # Let's just verify it doesn't crash and returns a valid result
-                try:
-                    result = generator.calculate_check_digit(
-                        invalid_court_code, register_number
-                    )
-                    assert isinstance(result, int)
-                    assert 0 <= result <= 9
-                except ValueError:
-                    # Empty string might cause other validation errors, which is also acceptable
-                    pass
-            else:
-                with pytest.raises(ValueError, match="Invalid character"):
-                    generator.calculate_check_digit(invalid_court_code, register_number)
+        for invalid_court_code, error in invalid_court_codes:
+            with pytest.raises(ValueError, match=error):
+                generator.calculate_check_digit(invalid_court_code, register_number)
 
     def test_calculate_check_digit_with_invalid_register_numbers(
         self, generator, invalid_register_numbers
@@ -166,19 +153,9 @@ class TestCheckDigitGenerator:
         self, generator, invalid_court_codes, invalid_register_numbers
     ):
         """Test generate_full_kw_number with invalid inputs."""
-        for invalid_court_code in invalid_court_codes:
-            if invalid_court_code == "":
-                try:
-                    result = generator.generate_full_kw_number(
-                        invalid_court_code, "12345678"
-                    )
-                    assert "/" in result
-                except ValueError:
-                    # If it fails, that's also acceptable
-                    pass
-            else:
-                with pytest.raises(ValueError, match="Invalid character"):
-                    generator.generate_full_kw_number(invalid_court_code, "12345678")
+        for invalid_court_code, error in invalid_court_codes:
+            with pytest.raises(ValueError, match=error):
+                generator.generate_full_kw_number(invalid_court_code, "12345678")
 
         for invalid_register_number in invalid_register_numbers:
             with pytest.raises(ValueError, match="Register number"):
@@ -207,13 +184,11 @@ class TestCheckDigitGenerator:
             assert isinstance(result, int)
             assert 0 <= result <= 9
 
-    def test_input_too_long_error(self, generator):
-        """Test error handling when combined input exceeds weight array length."""
-        very_long_court_code = "ABCDEFGH"  # 8 characters + 8 digit register = 16 total
-        register_number = "12345678"
-
-        with pytest.raises(ValueError, match="Input too long"):
-            generator.calculate_check_digit(very_long_court_code, register_number)
+    @pytest.mark.parametrize("court_code", ["A", "WA4", "WA4M1", "ABCDEFGH"])
+    def test_court_code_wrong_length_error(self, generator, court_code):
+        """Test that court codes must be exactly 4 characters, like in the validator."""
+        with pytest.raises(ValueError, match="Court code must be exactly 4 characters"):
+            generator.calculate_check_digit(court_code, "12345678")
 
     def test_consistency_between_methods(self, generator, valid_test_cases):
         """Test consistency between calculate_check_digit and generate_full_kw_number."""

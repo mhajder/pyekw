@@ -5,6 +5,7 @@ Validator for Polish eKW numbers.
 import re
 
 from .constants import CHECK_DIGIT_LENGTH
+from .constants import COURT_CODE_LENGTH
 from .constants import KW_PARTS_COUNT
 from .constants import REGISTER_NUMBER_LENGTH
 from .courts import CourtRegistry
@@ -64,7 +65,12 @@ class KWValidator:
             raise ValueError("Check digit must be a single digit")
 
         # Validate court code format (letters and digits only)
-        if not re.match(r"^[A-Z0-9]+$", court_code):
+        if len(court_code) != COURT_CODE_LENGTH:
+            raise ValueError(
+                f"Court code must be exactly {COURT_CODE_LENGTH} characters, got {len(court_code)}"
+            )
+
+        if not re.fullmatch(r"[A-Z0-9]+", court_code):
             raise ValueError("Court code must contain only letters and digits")
 
         return court_code, register_number, check_digit
