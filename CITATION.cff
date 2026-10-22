@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "pyekw"
+abstract: "Python library for Polish land registry (eKW, Elektroniczne Księgi Wieczyste) numbers: validate KW numbers, calculate check digits, look up 350+ courts, extract KW numbers from text and suggest corrections. Zero dependencies, typed."
+authors:
+  - given-names: Mateusz
+    family-names: Hajder
+repository-code: "https://github.com/mhajder/pyekw"
+url: "https://pypi.org/project/pyekw/"
+license: MIT
+version: 0.2.0
+keywords:
+  - ekw
+  - ksiegi-wieczyste
+  - kw-number
+  - land-registry
+  - poland
+  - check-digit
+  - validation
