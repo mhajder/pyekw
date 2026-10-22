@@ -364,10 +364,10 @@ class TestKWUtils:
     ):
         """Test error handling in validate_multiple_kw_numbers when parsing fails."""
 
-        def mock_validate_kw_number(kw_number, check_court=True):
+        def mock_validate_kw_number(*_args, **_kwargs):
             return True, None  # Return valid to reach the parsing step
 
-        def mock_parse_error(kw_number):
+        def mock_parse_error(*_args, **_kwargs):
             raise ValueError("Mocked parsing error")
 
         monkeypatch.setattr(
@@ -388,10 +388,10 @@ class TestKWUtils:
     def test_get_kw_info_parse_error_handling(self, utils, monkeypatch):
         """Test error handling in get_kw_info when parsing fails."""
 
-        def mock_validate_kw_number(kw_number, check_court=True):
+        def mock_validate_kw_number(*_args, **_kwargs):
             return True, None  # Return valid to reach the parsing step
 
-        def mock_parse_error(kw_number):
+        def mock_parse_error(*_args, **_kwargs):
             raise ValueError("Mocked parsing error")
 
         monkeypatch.setattr(

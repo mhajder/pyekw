@@ -57,7 +57,9 @@ class TestKWValidator:
     ):
         """Test parsing malformed KW numbers."""
         for malformed_kw in malformed_kw_numbers:
-            with pytest.raises(ValueError):
+            with pytest.raises(
+                ValueError, match=r"KW number must|Court code must|Register number must"
+            ):
                 validator.parse_kw_number(malformed_kw)
 
     def test_parse_kw_number_with_invalid_register_numbers(

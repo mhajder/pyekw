@@ -67,7 +67,7 @@ class TestCheckDigitGenerator:
         """Test calculate_check_digit with invalid register numbers."""
         court_code = "WA4M"
         for invalid_register_number in invalid_register_numbers:
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="Register number"):
                 generator.calculate_check_digit(court_code, invalid_register_number)
 
     def test_calculate_check_digit_register_number_length_validation(self, generator):
@@ -103,13 +103,9 @@ class TestCheckDigitGenerator:
     def test_calculate_check_digit_with_edge_cases(self, generator, edge_case_inputs):
         """Test calculate_check_digit with edge case inputs."""
         for court_code, register_number in edge_case_inputs:
-            try:
-                result = generator.calculate_check_digit(court_code, register_number)
-                assert isinstance(result, int)
-                assert 0 <= result <= 9
-            except ValueError:
-                # Some edge cases might be invalid, which is acceptable
-                pass
+            result = generator.calculate_check_digit(court_code, register_number)
+            assert isinstance(result, int)
+            assert 0 <= result <= 9
 
     def test_calculate_check_digit_return_type_and_range(self, generator):
         """Test that check digit is always an integer between 0-9."""
@@ -181,11 +177,11 @@ class TestCheckDigitGenerator:
                     # If it fails, that's also acceptable
                     pass
             else:
-                with pytest.raises(ValueError):
+                with pytest.raises(ValueError, match="Invalid character"):
                     generator.generate_full_kw_number(invalid_court_code, "12345678")
 
         for invalid_register_number in invalid_register_numbers:
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="Register number"):
                 generator.generate_full_kw_number("WA4M", invalid_register_number)
 
     def test_static_methods_accessibility(self):
@@ -207,13 +203,9 @@ class TestCheckDigitGenerator:
         ]
 
         for court_code, register_number in valid_character_combinations:
-            try:
-                result = generator.calculate_check_digit(court_code, register_number)
-                assert isinstance(result, int)
-                assert 0 <= result <= 9
-            except ValueError:
-                # Some combinations might be invalid due to character restrictions
-                pass
+            result = generator.calculate_check_digit(court_code, register_number)
+            assert isinstance(result, int)
+            assert 0 <= result <= 9
 
     def test_input_too_long_error(self, generator):
         """Test error handling when combined input exceeds weight array length."""
