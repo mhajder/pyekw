@@ -286,6 +286,19 @@ class TestKWUtils:
         assert isinstance(suggestions, list)
         # Should provide suggestions based on similar court codes
 
+    def test_suggest_corrections_without_court_check(self, utils):
+        """With check_court=False, an unknown court is kept and only the check digit is fixed."""
+        assert utils.suggest_corrections("WA9M/00123456/0", check_court=False) == [
+            "WA9M/00123456/9"
+        ]
+        assert "WA9M/00123456/9" not in utils.suggest_corrections("WA9M/00123456/0")
+
+    def test_suggest_corrections_without_court_check_invalid_character(self, utils):
+        """With check_court=False, a court code with an unusable character gets similar known courts."""
+        suggestions = utils.suggest_corrections("WA4Q/00123456/4", check_court=False)
+
+        assert suggestions[0] == "WA4M/00123456/4"
+
     def test_suggest_corrections_already_correct(self, utils, valid_kw_numbers):
         """Test correction suggestions for already correct KW numbers."""
         for valid_kw in valid_kw_numbers:

@@ -12,7 +12,7 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
-[Installation](https://github.com/mhajder/pyekw#-installation) · [Quick Start](https://github.com/mhajder/pyekw#-quick-start) · [API Reference](https://github.com/mhajder/pyekw#-api-reference) · [Development](https://github.com/mhajder/pyekw#-development)
+[Installation](https://github.com/mhajder/pyekw#-installation) · [Quick Start](https://github.com/mhajder/pyekw#-quick-start) · [Command Line](https://github.com/mhajder/pyekw#-command-line) · [API Reference](https://github.com/mhajder/pyekw#-api-reference) · [Development](https://github.com/mhajder/pyekw#-development)
 
 </div>
 
@@ -34,6 +34,7 @@ WA4M / 00123456 / 4
 - **Court registry**: built-in database of 350+ Polish courts handling land registry matters
 - **Text utilities**: normalize, extract, batch-validate and get detailed info about KW numbers
 - **Error correction**: suggest valid KW numbers for an invalid input
+- **Command-line tool**: validate, inspect and extract KW numbers without writing Python
 - **Zero dependencies**: pure Python, fully typed, nothing else to install
 
 ## 🚀 Installation
@@ -100,6 +101,27 @@ More examples are in [`examples/example_all_functions.py`](https://github.com/mh
 uv run python examples/example_all_functions.py
 ```
 
+## 💻 Command Line
+
+Run it without installing using `uvx`, or as `pyekw` after `pip install pyekw`:
+
+```sh
+# Validate one or more KW numbers (exit code 1 if any is invalid)
+uvx pyekw validate WA4M/00123456/4 WA4M/00123456/5
+# WA4M/00123456/4: valid
+# WA4M/00123456/5: invalid (Invalid check digit: expected 4, got 5)
+#   did you mean: WA4M/00123456/4
+
+# Show court and register details
+uvx pyekw info WA4M/00123456/4
+
+# Find KW numbers in a text file, or in standard input
+uvx pyekw extract contract.txt
+pdftotext contract.pdf - | uvx pyekw extract --valid-only
+```
+
+Every command supports `--json` for machine-readable output. Run `uvx pyekw --help` for all options.
+
 ## 📚 API Reference
 
 ### `KWValidator`
@@ -147,7 +169,7 @@ Helpers for working with KW numbers in real-world data.
 | `get_kw_info(kw_number)` | `KWInfo \| None` | Court, register number, check digit and validity in one dict |
 | `validate_multiple_kw_numbers(kw_numbers, check_court=True)` | `dict[str, KWValidationResult]` | Validate many KW numbers at once |
 | `generate_kw_number_variants(court_code, base_number, count=10)` | `list[str]` | Generate a series of consecutive valid KW numbers |
-| `suggest_corrections(kw_number)` | `list[str]` | Suggest valid KW numbers for an invalid input |
+| `suggest_corrections(kw_number, check_court=True)` | `list[str]` | Suggest valid KW numbers for an invalid input |
 
 ### Result types
 

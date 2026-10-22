@@ -42,6 +42,9 @@ dev = [
     "typos>=1.51.1",
 ]
 
+[project.scripts]
+pyekw = "pyekw.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/mhajder/pyekw"
 Repository = "https://github.com/mhajder/pyekw"
@@ -117,6 +120,7 @@ docstring-code-line-length = "dynamic"
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101", "S106", "S107"]  # Allow assert and hardcoded passwords in tests
 "examples/*" = ["T201"]
+"src/pyekw/cli.py" = ["T201"]  # The CLI prints its output
 
 [tool.ruff.lint.isort]
 known-first-party = ["pyekw"]

@@ -4,6 +4,7 @@ Utility functions for working with eKW numbers.
 
 import re
 
+from .constants import CHARACTER_VALUES
 from .courts import CourtRegistry
 from .generator import CheckDigitGenerator
 from .models import KWInfo
@@ -165,12 +166,16 @@ class KWUtils:
         except ValueError:
             return None
 
-    def suggest_corrections(self, kw_number: str) -> list[str]:
+    def suggest_corrections(
+        self, kw_number: str, check_court: bool = True
+    ) -> list[str]:
         """
         Suggest possible corrections for an invalid KW number.
 
         Args:
             kw_number: The potentially invalid KW number
+            check_court: Whether the court code must exist in the registry. If False,
+                any court code is accepted and only the check digit is corrected.
 
         Returns:
             List of suggested corrections
@@ -186,8 +191,11 @@ class KWUtils:
             # If parsing fails completely, can't suggest much
             return suggestions
 
-        if self.court_registry.is_valid_court(court_code):
-            # Known court: only the check digit can be wrong
+        court_code_is_accepted = self.court_registry.is_valid_court(court_code) or (
+            not check_court and all(char in CHARACTER_VALUES for char in court_code)
+        )
+        if court_code_is_accepted:
+            # Known (or accepted) court: only the check digit can be wrong
             correct_check_digit = CheckDigitGenerator.calculate_check_digit(
                 court_code, register_number
             )
