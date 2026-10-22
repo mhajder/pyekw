@@ -122,6 +122,15 @@ docstring-code-line-length = "dynamic"
 known-first-party = ["pyekw"]
 force-single-line = true
 
+[tool.pytest]
+testpaths = ["tests", "README.md"]
+addopts = [
+    "--doctest-glob=README.md",
+    "--cov=pyekw",
+    "--cov-report=term-missing",
+    "--cov-fail-under=100",
+]
+
 [tool.typos.default.extend-words]
 # Polish court names in courts_data.py
 nowe = "nowe"
@@ -131,5 +140,6 @@ name = "cz_conventional_commits"
 tag_format = "v$version"
 version_scheme = "pep440"
 version_provider = "uv"
+version_files = ["CITATION.cff:^version"]
 update_changelog_on_bump = true
 major_version_zero = true

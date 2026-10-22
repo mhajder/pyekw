@@ -60,40 +60,38 @@ uv add "git+https://github.com/mhajder/pyekw.git"
 
 ## ⚡ Quick Start
 
-```python
-from pyekw import CheckDigitGenerator
-from pyekw import CourtRegistry
-from pyekw import KWUtils
-from pyekw import KWValidator
+```pycon
+>>> from pyekw import CheckDigitGenerator, CourtRegistry, KWUtils, KWValidator
 
-# Validate a KW number
-validator = KWValidator()
-validator.validate_kw_number("WA4M/00123456/4")
-# (True, None)
-validator.validate_kw_number("WA4M/00123456/5")
-# (False, 'Invalid check digit: expected 4, got 5')
+>>> # Validate a KW number
+>>> validator = KWValidator()
+>>> validator.validate_kw_number("WA4M/00123456/4")
+(True, None)
+>>> validator.validate_kw_number("WA4M/00123456/5")
+(False, 'Invalid check digit: expected 4, got 5')
 
-# Generate a check digit or a complete KW number
-CheckDigitGenerator.calculate_check_digit("WA4M", "00123456")
-# 4
-CheckDigitGenerator.generate_full_kw_number("KR1P", "00012345")
-# 'KR1P/00012345/2'
+>>> # Generate a check digit or a complete KW number
+>>> CheckDigitGenerator.calculate_check_digit("WA4M", "00123456")
+4
+>>> CheckDigitGenerator.generate_full_kw_number("KR1P", "00012345")
+'KR1P/00012345/2'
 
-# Look up courts
-registry = CourtRegistry()
-registry.get_court_name("WA4M")
-# 'WARSZAWA (X)'
-registry.search_courts("Kraków")
-# [('KR1P', 'KRAKÓW')]
+>>> # Look up courts
+>>> registry = CourtRegistry()
+>>> registry.get_court_name("WA4M")
+'WARSZAWA (X)'
+>>> registry.search_courts("Kraków")
+[('KR1P', 'KRAKÓW')]
 
-# Work with KW numbers in text
-utils = KWUtils()
-utils.normalize_kw_number(" wa4m / 00123456 / 4 ")
-# 'WA4M/00123456/4'
-utils.extract_kw_numbers("Nieruchomość WA4M/00123456/4 oraz KR1P/00012345/2.")
-# ['WA4M/00123456/4', 'KR1P/00012345/2']
-utils.suggest_corrections("WA4M/00123456/5")
-# ['WA4M/00123456/4']
+>>> # Work with KW numbers in text
+>>> utils = KWUtils()
+>>> utils.normalize_kw_number(" wa4m / 00123456 / 4 ")
+'WA4M/00123456/4'
+>>> utils.extract_kw_numbers("Nieruchomość WA4M/00123456/4 oraz KR1P/00012345/2.")
+['WA4M/00123456/4', 'KR1P/00012345/2']
+>>> utils.suggest_corrections("WA4M/00123456/5")
+['WA4M/00123456/4']
+
 ```
 
 More examples are in [`examples/example_all_functions.py`](https://github.com/mhajder/pyekw/blob/main/examples/example_all_functions.py):
@@ -159,11 +157,8 @@ git clone https://github.com/mhajder/pyekw.git
 cd pyekw
 uv sync --group dev
 
-# Run tests
+# Run tests, README examples and the 100% coverage check
 uv run pytest
-
-# Run with coverage
-uv run pytest --cov=src/
 
 # Run linting and formatting
 uv run ruff check .
