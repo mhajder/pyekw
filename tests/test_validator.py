@@ -377,3 +377,17 @@ class TestKWValidator:
         for failing_case in failing_cases:
             result = validator.is_valid_kw_number(failing_case)
             assert result is False
+
+    @pytest.mark.parametrize(
+        ("kw_number", "error"),
+        [
+            ("WA4M/0012345٦/4", "Register number must contain only digits"),
+            ("WA4M/0012345²/4", "Register number must contain only digits"),
+            ("WA4M/00123456/٤", "Check digit must be a single digit"),
+        ],
+    )
+    def test_validate_kw_number_rejects_non_ascii_digits(
+        self, validator, kw_number, error
+    ):
+        """Test that Unicode digits are rejected instead of raising an exception."""
+        assert validator.validate_kw_number(kw_number) == (False, error)

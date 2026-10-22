@@ -9,6 +9,7 @@ from .constants import KW_PARTS_COUNT
 from .constants import REGISTER_NUMBER_LENGTH
 from .courts import CourtRegistry
 from .generator import CheckDigitGenerator
+from .generator import is_ascii_digits
 
 
 class KWValidator:
@@ -50,7 +51,7 @@ class KWValidator:
                 f"Register number must be exactly {REGISTER_NUMBER_LENGTH} digits, got {len(register_number)}"
             )
 
-        if not register_number.isdigit():
+        if not is_ascii_digits(register_number):
             raise ValueError("Register number must contain only digits")
 
         # Validate check digit
@@ -59,7 +60,7 @@ class KWValidator:
                 f"Check digit must be exactly {CHECK_DIGIT_LENGTH} digit, got {len(check_digit)}"
             )
 
-        if not check_digit.isdigit():
+        if not is_ascii_digits(check_digit):
             raise ValueError("Check digit must be a single digit")
 
         # Validate court code format (letters and digits only)

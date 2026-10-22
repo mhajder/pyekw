@@ -229,3 +229,10 @@ class TestCheckDigitGenerator:
             assert (
                 calculated_check_digit == extracted_check_digit == expected_check_digit
             )
+
+    def test_calculate_check_digit_rejects_non_ascii_digits(self, generator):
+        """Test that Unicode digits in the register number raise ValueError."""
+        with pytest.raises(
+            ValueError, match="Register number must contain only digits"
+        ):
+            generator.calculate_check_digit("WA4M", "0012345²")

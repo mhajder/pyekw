@@ -6,6 +6,11 @@ from .constants import CHARACTER_VALUES
 from .constants import WEIGHTS
 
 
+def is_ascii_digits(value: str) -> bool:
+    """Check if a string contains only ASCII digits (str.isdigit() also accepts e.g. '²')."""
+    return value.isascii() and value.isdigit()
+
+
 class CheckDigitGenerator:
     """Generator for eKW check digits."""
 
@@ -33,7 +38,7 @@ class CheckDigitGenerator:
                 f"Register number must be exactly 8 digits, got {len(register_number)}"
             )
 
-        if not register_number.isdigit():
+        if not is_ascii_digits(register_number):
             raise ValueError("Register number must contain only digits")
 
         # Validate court code characters
