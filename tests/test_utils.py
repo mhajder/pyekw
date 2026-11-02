@@ -447,3 +447,110 @@ class TestKWUtils:
         assert suggestions
         for suggestion in suggestions:
             assert utils.validator.is_valid_kw_number(suggestion)
+
+    def test_normalize_kw_number_compact(self, utils):
+        """Test normalization with compact input and compact output flag."""
+        assert utils.normalize_kw_number("WA4M001234564") == "WA4M/00123456/4"
+        assert (
+            utils.normalize_kw_number("WA4M/00123456/4", compact=True)
+            == "WA4M001234564"
+        )
+        assert (
+            utils.normalize_kw_number("WA4M001234564", compact=True) == "WA4M001234564"
+        )
+        assert utils.normalize_kw_number("ENVIRONMENTAL") == "ENVIRONMENTAL"
+
+    def test_normalize_kw_number_auto_pad(self, utils):
+        """Test normalization with auto_pad=True."""
+        assert (
+            utils.normalize_kw_number("WA4M/123456/4", auto_pad=True)
+            == "WA4M/00123456/4"
+        )
+        # Only the exact 13-character compact form is split: shorter unseparated
+        # strings are ambiguous (e.g. the check digit may be missing)
+        assert utils.normalize_kw_number("WA4M1234564", auto_pad=True) == "WA4M1234564"
+        assert (
+            utils.normalize_kw_number("WA4M00123456", auto_pad=True) == "WA4M00123456"
+        )
+        assert (
+            utils.normalize_kw_number("WA4M001234564", auto_pad=True)
+            == "WA4M/00123456/4"
+        )
+
+    def test_extract_kw_numbers_include_compact(self, utils):
+        """Test extraction including compact 13-character KW numbers."""
+        text = "Księga WA4M001234564 oraz standardowa KR1P/00012345/2 i znowu WA4M001234564"
+        extracted = utils.extract_kw_numbers(text, include_compact=True)
+        # In text order, duplicates included
+        assert extracted == ["WA4M/00123456/4", "KR1P/00012345/2", "WA4M/00123456/4"]
+
+    def test_extract_kw_numbers_compact_keeps_text_order(self, utils):
+        text = "WA4M001234564 ... WA4M/00000001/2"
+        assert utils.extract_kw_numbers(text, include_compact=True) == [
+            "WA4M/00123456/4",
+            "WA4M/00000001/2",
+        ]
+
+    def test_extract_kw_numbers_compact_skips_all_digit_tokens(self, utils):
+        text = "ISBN 9788301234567, zamówienie 1234567890123, księga CIKW000123459"
+        assert utils.extract_kw_numbers(text, include_compact=True) == [
+            "CIKW/00012345/9"
+        ]
+
+    def test_from_legacy_valid(self, utils):
+        """Test converting legacy book numbers to eKW numbers."""
+        assert utils.from_legacy("WA4M", "KW 12345") == "WA4M/00012345/2"
+        assert utils.from_legacy("WA4M", 12345) == "WA4M/00012345/2"
+        assert utils.from_legacy("wa4m", "12345/W") == "WA4M/00012345/2"
+        assert utils.from_legacy("WA4M", "Dz.Kw. 987") == "WA4M/00000987/7"
+
+    def test_from_legacy_invalid_court(self, utils):
+        with pytest.raises(ValueError, match="Invalid court code"):
+            utils.from_legacy("INVALID", "12345")
+
+    def test_from_legacy_unknown_court_allowed(self, utils):
+        assert utils.from_legacy("ZZ9Z", 12345, check_court=False) == "ZZ9Z/00012345/5"
+
+    def test_from_legacy_ignores_non_ascii_digits(self, utils):
+        assert utils.from_legacy("WA4M", "KW 12345²") == "WA4M/00012345/2"
+
+    def test_from_legacy_no_digits(self, utils):
+        with pytest.raises(ValueError, match="must contain at least one digit"):
+            utils.from_legacy("WA4M", "KW NO DIGITS")
+
+    def test_from_legacy_several_digit_groups(self, utils):
+        with pytest.raises(ValueError, match="single group of digits"):
+            utils.from_legacy("WA4M", "KW 123/45")
+
+    def test_from_legacy_too_many_digits(self, utils):
+        with pytest.raises(ValueError, match="cannot exceed 8 digits"):
+            utils.from_legacy("WA4M", "123456789")
+
+    def test_validate_multiple_with_auto_pad_and_enriched_fields(self, utils):
+        results = utils.validate_multiple_kw_numbers(
+            ["WA4M/123456/4"], check_court=True, auto_pad=True
+        )
+        res = results["WA4M/00123456/4"]
+        assert res["is_valid"] is True
+        assert res["compact"] == "WA4M001234564"
+        assert res["circuit"] == "Sąd Okręgowy w Warszawie"
+        assert res["voivodeship"] == "mazowieckie"
+
+    def test_get_kw_info_with_auto_pad_and_enriched_fields(self, utils):
+        info = utils.get_kw_info("wa4m/123456/4", auto_pad=True)
+        assert info is not None
+        assert info["kw_number"] == "WA4M/00123456/4"
+        assert info["compact"] == "WA4M001234564"
+        assert info["circuit"] == "Sąd Okręgowy w Warszawie"
+        assert info["voivodeship"] == "mazowieckie"
+        assert "przegladarka-ekw.ms.gov.pl" in info["url"]
+
+    def test_normalize_kw_number_auto_pad_non_digit_or_long(self, utils):
+        assert utils.normalize_kw_number("WA4M/ABC/4", auto_pad=True) == "WA4M/ABC/4"
+        assert (
+            utils.normalize_kw_number("WA4M/123456789/4", auto_pad=True)
+            == "WA4M/123456789/4"
+        )
+
+    def test_normalize_kw_number_compact_invalid_parts(self, utils):
+        assert utils.normalize_kw_number("INVALID", compact=True) == "INVALID"

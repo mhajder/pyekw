@@ -15,6 +15,10 @@ class KWInfo(TypedDict):
     register_number: str
     check_digit: int
     is_valid: bool
+    compact: str
+    circuit: str | None
+    voivodeship: str | None
+    url: str
 
 
 class _KWValidationResultBase(TypedDict):
@@ -36,3 +40,6 @@ class KWValidationResult(_KWValidationResultBase, total=False):
     check_digit: str
     court_name: str | None
     court_full_name: str | None
+    compact: str
+    circuit: str | None
+    voivodeship: str | None

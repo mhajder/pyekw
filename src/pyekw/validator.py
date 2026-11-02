@@ -6,6 +6,7 @@ import re
 
 from .constants import CHECK_DIGIT_LENGTH
 from .constants import COURT_CODE_LENGTH
+from .constants import KW_COMPACT_LENGTH
 from .constants import KW_PARTS_COUNT
 from .constants import REGISTER_NUMBER_LENGTH
 from .courts import CourtRegistry
@@ -20,12 +21,19 @@ class KWValidator:
         """Initialize the validator with court registry."""
         self.court_registry = CourtRegistry()
 
-    def parse_kw_number(self, kw_number: str) -> tuple[str, str, str]:
+    def parse_kw_number(
+        self,
+        kw_number: str,
+        auto_pad: bool = False,
+        allow_compact: bool = False,
+    ) -> tuple[str, str, str]:
         """
         Parse a KW number into its components.
 
         Args:
             kw_number: The KW number to parse (e.g., 'WA4M/00123456/4')
+            auto_pad: Whether to pad register numbers shorter than 8 digits with leading zeros
+            allow_compact: Whether to accept unseparated 13-character compact format
 
         Returns:
             Tuple of (court_code, register_number, check_digit)
@@ -34,10 +42,16 @@ class KWValidator:
             ValueError: If the KW number format is invalid
         """
         # Remove whitespace and convert to uppercase
-        kw_number = kw_number.strip().upper()
+        clean = kw_number.strip().upper()
 
-        # Split by '/'
-        parts = kw_number.split("/")
+        if allow_compact and "/" not in clean and len(clean) == KW_COMPACT_LENGTH:
+            parts = [
+                clean[:COURT_CODE_LENGTH],
+                clean[COURT_CODE_LENGTH:-CHECK_DIGIT_LENGTH],
+                clean[-CHECK_DIGIT_LENGTH:],
+            ]
+        else:
+            parts = clean.split("/")
 
         if len(parts) != KW_PARTS_COUNT:
             raise ValueError(
@@ -45,6 +59,13 @@ class KWValidator:
             )
 
         court_code, register_number, check_digit = parts
+
+        if (
+            auto_pad
+            and (1 <= len(register_number) <= REGISTER_NUMBER_LENGTH)
+            and is_ascii_digits(register_number)
+        ):
+            register_number = register_number.zfill(REGISTER_NUMBER_LENGTH)
 
         # Validate register number
         if len(register_number) != REGISTER_NUMBER_LENGTH:
@@ -110,7 +131,11 @@ class KWValidator:
             return False
 
     def validate_kw_number(
-        self, kw_number: str, check_court: bool = True
+        self,
+        kw_number: str,
+        check_court: bool = True,
+        auto_pad: bool = False,
+        allow_compact: bool = False,
     ) -> tuple[bool, str | None]:
         """
         Validate a complete KW number.
@@ -118,6 +143,8 @@ class KWValidator:
         Args:
             kw_number: The KW number to validate
             check_court: Whether to validate the court code against the registry
+            auto_pad: Whether to pad register numbers shorter than 8 digits with leading zeros
+            allow_compact: Whether to accept unseparated 13-character compact format
 
         Returns:
             Tuple of (is_valid, error_message)
@@ -125,7 +152,9 @@ class KWValidator:
         """
         try:
             # Parse the KW number
-            court_code, register_number, check_digit = self.parse_kw_number(kw_number)
+            court_code, register_number, check_digit = self.parse_kw_number(
+                kw_number, auto_pad=auto_pad, allow_compact=allow_compact
+            )
 
             # Validate court code if requested
             if check_court and not self.validate_court_code(court_code):
@@ -146,16 +175,29 @@ class KWValidator:
         except ValueError as e:
             return False, str(e)
 
-    def is_valid_kw_number(self, kw_number: str, check_court: bool = True) -> bool:
+    def is_valid_kw_number(
+        self,
+        kw_number: str,
+        check_court: bool = True,
+        auto_pad: bool = False,
+        allow_compact: bool = False,
+    ) -> bool:
         """
         Check if a KW number is valid.
 
         Args:
             kw_number: The KW number to validate
             check_court: Whether to validate the court code against the registry
+            auto_pad: Whether to pad register numbers shorter than 8 digits with leading zeros
+            allow_compact: Whether to accept unseparated 13-character compact format
 
         Returns:
             True if the KW number is valid, False otherwise
         """
-        is_valid, _ = self.validate_kw_number(kw_number, check_court)
+        is_valid, _ = self.validate_kw_number(
+            kw_number,
+            check_court=check_court,
+            auto_pad=auto_pad,
+            allow_compact=allow_compact,
+        )
         return is_valid

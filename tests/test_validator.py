@@ -409,3 +409,35 @@ class TestKWValidator:
             ValueError, match="Court code must contain only letters and digits"
         ):
             validator.parse_kw_number(kw_number)
+
+    def test_parse_kw_number_compact(self, validator):
+        """Test parsing compact 13-character KW number with allow_compact=True."""
+        court, reg, check = validator.parse_kw_number(
+            "WA4M001234564", allow_compact=True
+        )
+        assert court == "WA4M"
+        assert reg == "00123456"
+        assert check == "4"
+
+        # By default allow_compact is False and rejects it
+        with pytest.raises(ValueError, match="KW number must have exactly 3 parts"):
+            validator.parse_kw_number("WA4M001234564")
+
+    def test_parse_kw_number_auto_pad(self, validator):
+        """Test parsing with auto_pad=True."""
+        _court, reg, _check = validator.parse_kw_number("WA4M/123456/4", auto_pad=True)
+        assert reg == "00123456"
+
+    def test_validate_and_is_valid_with_auto_pad_and_compact(self, validator):
+        """Test validate_kw_number with auto_pad and allow_compact flags."""
+        is_valid, error = validator.validate_kw_number("WA4M/123456/4", auto_pad=True)
+        assert is_valid is True
+        assert error is None
+        assert validator.is_valid_kw_number("WA4M/123456/4", auto_pad=True) is True
+
+        is_valid, error = validator.validate_kw_number(
+            "WA4M001234564", allow_compact=True
+        )
+        assert is_valid is True
+        assert error is None
+        assert validator.is_valid_kw_number("WA4M001234564", allow_compact=True) is True
