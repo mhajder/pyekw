@@ -48,3 +48,9 @@ KW_PARTS_COUNT = 3
 COURT_CODE_LENGTH = 4
 REGISTER_NUMBER_LENGTH = 8
 CHECK_DIGIT_LENGTH = 1
+KW_COMPACT_LENGTH = COURT_CODE_LENGTH + REGISTER_NUMBER_LENGTH + CHECK_DIGIT_LENGTH
+
+# Official Ministry of Justice eKW portal
+EKW_PORTAL_URL = (
+    "https://przegladarka-ekw.ms.gov.pl/eukw_prz/KsiegiWieczyste/wyszukiwanieKW"
+)

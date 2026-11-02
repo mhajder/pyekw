@@ -136,8 +136,9 @@ addopts = [
 ]
 
 [tool.typos.default.extend-words]
-# Polish court names in courts_data.py
+# Polish court names in courts_data.py and API parameters
 nowe = "nowe"
+numer = "numer"
 
 [tool.commitizen]
 name = "cz_conventional_commits"

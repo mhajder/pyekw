@@ -2,6 +2,8 @@
 Tests for the CourtRegistry class.
 """
 
+from pyekw.courts import CourtRegistry
+
 
 class TestCourtRegistry:
     """Test cases for the CourtRegistry class."""
@@ -194,3 +196,79 @@ class TestCourtRegistry:
         assert len(fresh_all_courts) == original_length
         assert "TEST" not in fresh_all_courts
         assert "TEST" not in fresh_detailed_courts
+
+    def test_get_court_circuit_and_voivodeship(self, registry):
+        """Test getting regional court circuit and voivodeship."""
+        assert registry.get_court_circuit("WA4M") == "Sąd Okręgowy w Warszawie"
+        assert registry.get_court_voivodeship("WA4M") == "mazowieckie"
+        assert registry.get_court_circuit("wa4m") == "Sąd Okręgowy w Warszawie"
+        assert registry.get_court_voivodeship("wa4m") == "mazowieckie"
+
+        assert registry.get_court_circuit("NONEXISTENT") is None
+        assert registry.get_court_voivodeship("NONEXISTENT") is None
+
+    def test_get_all_circuits(self, registry):
+        """Test get_all_circuits returns all 47 prefixes."""
+        circuits = registry.get_all_circuits()
+        assert isinstance(circuits, dict)
+        assert len(circuits) == 47
+        assert "WA" in circuits
+        assert circuits["WA"]["circuit"] == "Sąd Okręgowy w Warszawie"
+        assert circuits["WA"]["voivodeship"] == "mazowieckie"
+
+    def test_get_courts_by_voivodeship(self, registry):
+        """Test filtering courts by voivodeship."""
+        mazowieckie_courts = registry.get_courts_by_voivodeship("mazowieckie")
+        assert len(mazowieckie_courts) > 0
+        codes = [code for code, _name in mazowieckie_courts]
+        assert "WA4M" in codes
+        assert "CIKW" in codes
+
+        # Case insensitive and stripped
+        assert len(registry.get_courts_by_voivodeship("  MAZOWIECKIE  ")) == len(
+            mazowieckie_courts
+        )
+        assert len(
+            registry.get_courts_by_voivodeship("województwo mazowieckie")
+        ) == len(mazowieckie_courts)
+        assert registry.get_courts_by_voivodeship("nonexistent") == []
+
+    def test_get_courts_by_circuit(self, registry):
+        """Test filtering courts by circuit."""
+        krakow_circuit = registry.get_courts_by_circuit("Krakowie")
+        assert len(krakow_circuit) > 0
+        codes = [code for code, _name in krakow_circuit]
+        assert "KR1P" in codes
+        assert registry.get_courts_by_circuit("nonexistent") == []
+        assert registry.get_courts_by_circuit("  ") == []
+
+    def test_search_courts_ignores_circuit_and_voivodeship(self, registry):
+        """Circuit and voivodeship have their own lookups and do not widen search."""
+        # Every circuit name contains 'Sąd Okręgowy w'
+        assert registry.search_courts("Sąd Okręgowy") == []
+        for code, name in registry.search_courts("WA"):
+            full_name = registry.get_court_full_name(code)
+            assert full_name is not None
+            assert "WA" in code or "WA" in name.upper() or "WA" in full_name.upper()
+
+    def test_get_all_circuits_returns_copies(self, registry):
+        """Mutating the result does not affect the registry or new registries."""
+        circuits = registry.get_all_circuits()
+        circuits["WA"]["circuit"] = "changed"
+        assert (
+            registry.get_all_circuits()["WA"]["circuit"] == "Sąd Okręgowy w Warszawie"
+        )
+        assert CourtRegistry().get_court_circuit("WA4M") == "Sąd Okręgowy w Warszawie"
+
+    def test_official_url_and_params(self, registry):
+        """Test official portal URL and parameters."""
+        url = registry.get_official_url()
+        assert url == (
+            "https://przegladarka-ekw.ms.gov.pl/eukw_prz/KsiegiWieczyste/wyszukiwanieKW"
+        )
+        params = registry.get_official_search_params("wa4m", "00123456", 4)
+        assert params == {
+            "kodWydzialu": "WA4M",
+            "numerKw": "00123456",
+            "cyfraKontrolna": "4",
+        }
