@@ -1,3 +1,12 @@
+## v0.4.0 (2026-11-02)
+
+### Feat
+
+- **cli**: add generate and courts commands, auto-pad flags, and linting check mode
+- add KWNumber first-class value object
+- **utils**: enrich KWInfo and support auto-padding, compact format and legacy book conversion
+- **courts**: add regional court circuits, voivodeships and portal link helpers
+
 ## v0.3.0 (2026-10-23)
 
 ### Feat

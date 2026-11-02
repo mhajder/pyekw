@@ -9,7 +9,7 @@ authors:
 repository-code: "https://github.com/mhajder/pyekw"
 url: "https://pypi.org/project/pyekw/"
 license: MIT
-version: 0.3.0
+version: 0.4.0
 keywords:
   - ekw
   - ksiegi-wieczyste
