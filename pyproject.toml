@@ -139,6 +139,8 @@ addopts = [
 # Polish court names in courts_data.py and API parameters
 nowe = "nowe"
 numer = "numer"
+# pydantic_core.core_schema.to_string_ser_schema()
+ser = "ser"
 
 [tool.commitizen]
 name = "cz_conventional_commits"

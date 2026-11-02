@@ -10,6 +10,7 @@ from importlib.metadata import version as _version
 
 from .courts import CourtRegistry
 from .generator import CheckDigitGenerator
+from .kw_number import KWNumber
 from .models import KWInfo
 from .models import KWValidationResult
 from .utils import KWUtils
@@ -24,6 +25,7 @@ __all__ = [
     "CheckDigitGenerator",
     "CourtRegistry",
     "KWInfo",
+    "KWNumber",
     "KWUtils",
     "KWValidationResult",
     "KWValidator",
