@@ -1,0 +1,6 @@
+- id: pyekw-validate
+  name: pyekw validate
+  description: Fail if files contain invalid Polish land registry (eKW) numbers
+  entry: pyekw extract --check
+  language: python
+  types: [text]

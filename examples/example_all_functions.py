@@ -4,6 +4,7 @@ Example usage of all main pyekw library functions and classes.
 
 from pyekw import CheckDigitGenerator
 from pyekw import CourtRegistry
+from pyekw import KWNumber
 from pyekw import KWUtils
 from pyekw import KWValidator
 
@@ -51,6 +52,10 @@ print("Court exists:", registry.is_valid_court(court_code))
 # Get court name
 print("Court name:", registry.get_court_name(court_code))
 
+# Regional Court circuit and voivodeship
+print("Circuit:", registry.get_court_circuit(court_code))
+print("Voivodeship:", registry.get_court_voivodeship(court_code))
+
 # Search courts
 search_results = registry.search_courts("WARSZAWA")
 print("Search results:", search_results)
@@ -63,9 +68,15 @@ print(f"Total courts: {len(all_courts)}")
 print("*" * 10, "KWUtils Example", "*" * 10)
 utils = KWUtils()
 
-# Normalize KW number format
+# Normalize KW number format (standard and compact)
 normalized = utils.normalize_kw_number(" wa4m / 00123456 / 4 ")
 print(f"Normalized: {normalized}")
+compact_kw = utils.normalize_kw_number("WA4M/00123456/4", compact=True)
+print(f"Compact format: {compact_kw}")
+
+# Convert legacy book number to modern eKW
+legacy_converted = utils.from_legacy("WA4M", "KW 12345")
+print(f"Legacy converted: {legacy_converted}")
 
 # Extract KW numbers from text
 text = "Properties: WA4M/00123456/4 and BB1B/12345678/9"
@@ -87,3 +98,11 @@ print(f"Multiple validation results: {multi_results}")
 # Suggest corrections for invalid KW number
 suggestions = utils.suggest_corrections("WA4M/00123456/9")
 print(f"Suggestions: {suggestions}")
+
+# --- KWNumber Value Object ---
+print("*" * 10, "KWNumber Example", "*" * 10)
+kw = KWNumber.from_string("WA4M001234564")
+print(f"KWNumber formatted: {kw.formatted}")
+print(f"KWNumber compact:   {kw.compact}")
+print(f"KWNumber court:     {kw.court_name} ({kw.circuit}, {kw.voivodeship})")
+print(f"KWNumber portal URL: {kw.portal_url}")
